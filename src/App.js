@@ -5,6 +5,12 @@ import Loader from "./components/Loader";
 import API from "./services/api";
 
 function App() {
+  /**
+   * The client-side of the application should have no knowledge about the board,
+   * each time a user clicks on a card, the client should send a request to the
+   * server with the file id to receive a result of this player’s action.
+   */
+
   const [gameData, setGameData] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -23,6 +29,7 @@ function App() {
 
   const difficultySelected = async (selectedDifficulty) => {
     setLoading(true);
+
     const { data } = await API.post("api/start-game", {
       difficulty: selectedDifficulty,
     });
@@ -39,7 +46,7 @@ function App() {
 
   const handleCardUpdate = (cards) => {
     return new Promise(async (resolve, reject) => {
-      const newGameData = { ...gameData, cards: cards };
+      const newGameData = { ...gameData, cards };
 
       const { data } = await API.post("api/select-card", {
         gameData: newGameData,

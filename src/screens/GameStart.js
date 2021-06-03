@@ -17,7 +17,7 @@ function GameStart({ onDifficultySelection }) {
             <div className="rounded-md shadow">
               <button
                 onClick={() => onDifficultySelection("easy")}
-                className="focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50  w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 md:py-4 md:text-lg md:px-10"
+                className="focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50  w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 md:py-4 md:text-lg md:px-10 transition duration-150 ease-in-out transform  hover:scale-110"
               >
                 Easy
               </button>
@@ -25,7 +25,7 @@ function GameStart({ onDifficultySelection }) {
             <div className="mt-3 sm:mt-0 sm:ml-3">
               <button
                 onClick={() => onDifficultySelection("medium")}
-                className="focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50  w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 md:py-4 md:text-lg md:px-10"
+                className="focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50  w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 md:py-4 md:text-lg md:px-10 transition duration-150 ease-in-out transform  hover:scale-110"
               >
                 Medium
               </button>
@@ -33,7 +33,7 @@ function GameStart({ onDifficultySelection }) {
             <div className="mt-3 sm:mt-0 sm:ml-3">
               <button
                 onClick={() => onDifficultySelection("hard")}
-                className="focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50 w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 md:py-4 md:text-lg md:px-10"
+                className="focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50 w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 md:py-4 md:text-lg md:px-10 transition duration-150 ease-in-out transform  hover:scale-110"
               >
                 Hard
               </button>
