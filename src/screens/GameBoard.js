@@ -1,45 +1,48 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import React, { useState } from "react";
+
 import Card from "../components/Card";
 import ElapsedTime from "../components/ElapsedTime";
 import Stars from "../components/Stars";
 
-function GameBoard({ gameData, onCardUpdate, onRestart }) {
-  const [cards, setCards] = useState([]);
+function GameBoard({ cards, onCardUpdate, onRestart }) {
+  const [timer, setTimer] = useState(null);
+  const [game_ended, setGame_ended] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [error_score, setError_score] = useState(0);
 
-  const [flippedCount, setFlippedCount] = useState(0);
+  const handleCardClick = async (cardIndex) => {
+    const res = await onCardUpdate(cardIndex);
+    if (!timer && res.cards) {
+      res.cards.forEach((card) => {
+        if (card.isFlipped) {
+          cards[card.index].cardRef.current.className = `card is-flipped`;
+        }
+      });
 
-  const handleCardClick = (cardIndex, flippedCardsCount) => {
-    if (flippedCardsCount < 2) {
-      setFlippedCount(flippedCardsCount + 1);
-      let newCards = [...cards];
+      if (res.cards.length === 2) {
+        const t = setTimeout(() => {
+          res.cards.forEach((card) => {
+            if (card.isVisible) {
+              cards[card.index].cardRef.current.className = "card";
+            } else {
+              cards[card.index].cardRef.current.className = `card hidden`;
+            }
+          });
 
-      newCards[cardIndex].isFlipped = true;
-      setCards(newCards);
-    }
+          if (res.game_ended) {
+            setGame_ended(true);
+            setRating(res.rating);
+          }
 
-    // if one card is already flipped then send cards data to server
-    if (flippedCardsCount === 1) {
-      // hide cards after 3 seconds
-      const timer = setTimeout(async () => {
-        const res = await onCardUpdate(cards);
+          setError_score(res.error_score);
 
-        const newCards = res.cards.reduce((a, c) => {
-          c.isFlipped = false;
-          a.push(c);
-          return a;
-        }, []);
+          setTimer(null);
+        }, 3000);
 
-        setCards(newCards);
-        setFlippedCount(0);
-        clearTimeout(timer);
-      }, 3000);
+        setTimer(t);
+      }
     }
   };
-
-  useEffect(() => {
-    setCards(gameData.cards);
-  }, [gameData]);
 
   return (
     <main className="my-10 mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 sm:my-6  md:my-8 lg:my-10  xl:my-14">
@@ -52,19 +55,19 @@ function GameBoard({ gameData, onCardUpdate, onRestart }) {
         <div>
           Elapsed Time:{" "}
           <ElapsedTime
-            stop={gameData.game_ended}
-            seconds={gameData.elapsed_time}
+            stop={game_ended}
+            // seconds={elapsed_time}
           />
         </div>
-        <div className="text-right">Error Score: {gameData.error_score}</div>
+        <div className="text-right">Error Score: {error_score}</div>
       </div>
-      {gameData.game_ended ? (
+      {game_ended ? (
         <div className="text-center">
           <div className="md:text-2xl my-4">Game Ended</div>
           <div>
-            <Stars stars={gameData.rating} />
+            <Stars stars={rating} />
           </div>
-          <div className="text-sm">You got {gameData.rating} stars</div>
+          <div className="text-sm">You got {rating} stars</div>
           <div>
             <button
               onClick={onRestart}
@@ -82,7 +85,6 @@ function GameBoard({ gameData, onCardUpdate, onRestart }) {
               card={card}
               index={index}
               onCardClick={handleCardClick}
-              flippedCount={flippedCount}
             />
           ))}
         </div>
@@ -90,9 +92,5 @@ function GameBoard({ gameData, onCardUpdate, onRestart }) {
     </main>
   );
 }
-
-GameBoard.protoType = {
-  difficulty: PropTypes.string.isRequired,
-};
 
 export default GameBoard;

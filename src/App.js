@@ -1,31 +1,14 @@
-import { useEffect, useState } from "react";
+import { createRef, useState } from "react";
 import GameBoard from "./screens/GameBoard";
 import GameStart from "./screens/GameStart";
 import Loader from "./components/Loader";
 import API from "./services/api";
 
 function App() {
-  /**
-   * The client-side of the application should have no knowledge about the board,
-   * each time a user clicks on a card, the client should send a request to the
-   * server with the file id to receive a result of this player’s action.
-   */
+  const [fileId, setFileId] = useState(null);
+  const [cards, setCards] = useState([]);
 
-  const [gameData, setGameData] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  const getGameData = async () => {
-    if (localStorage.getItem("file_id")) {
-      const { data } = await API.post("api/get-game-data", {
-        fileId: localStorage.getItem("file_id"),
-      });
-
-      setGameData(data);
-      setLoading(false);
-    } else {
-      setLoading(false);
-    }
-  };
+  const [loading, setLoading] = useState(false);
 
   const difficultySelected = async (selectedDifficulty) => {
     setLoading(true);
@@ -34,32 +17,31 @@ function App() {
       difficulty: selectedDifficulty,
     });
 
-    localStorage.setItem("file_id", data.file_id);
+    setFileId(data.file_id);
 
-    setGameData(data);
+    const cardData = data.cards.reduce((a, c) => {
+      a.push({ cardNum: c, cardRef: createRef(null) });
+      return a;
+    }, []);
+
+    setCards(cardData);
+
     setLoading(false);
   };
 
-  useEffect(() => {
-    getGameData();
-  }, []);
-
-  const handleCardUpdate = (cards) => {
+  const handleCardUpdate = (cardIndex) => {
     return new Promise(async (resolve, reject) => {
-      const newGameData = { ...gameData, cards };
-
       const { data } = await API.post("api/select-card", {
-        gameData: newGameData,
+        fileId,
+        cardIndex,
       });
 
-      setGameData(data);
       resolve(data);
     });
   };
 
   const handleRestart = () => {
-    localStorage.removeItem("file_id");
-    setGameData({});
+    setFileId(null);
   };
 
   return (
@@ -68,9 +50,9 @@ function App() {
         <Loader />
       ) : (
         <>
-          {gameData.file_id ? (
+          {fileId ? (
             <GameBoard
-              gameData={gameData}
+              cards={cards}
               onCardUpdate={handleCardUpdate}
               onRestart={handleRestart}
             />

@@ -5,7 +5,7 @@ export default class ElapsedTime extends Component {
     super(props);
 
     this.state = {
-      secondsElapsed: props.seconds,
+      secondsElapsed: props.seconds || 0,
       timeStr: "00:00:00",
       stop: props.stop,
     };
